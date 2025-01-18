@@ -67,7 +67,7 @@ Follow these steps to set up and run the project using Docker:
 Clone the repository:
 
 git clone <repository-url>
-cd travelbuddy
+cd flight-price-alerts
 
 Create a .env file:
 Create a .env file in the root directory based on the provided .env.example file. Ensure all necessary environment variables (API keys, database credentials, etc.) are set correctly.
