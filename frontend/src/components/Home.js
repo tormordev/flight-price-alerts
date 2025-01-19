@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; 
 import { Button, Container, Box, Typography, TextField, Alert, Switch, FormControlLabel, Grid, MenuItem, Select } from '@mui/material';
 import Autocomplete from '../Autocomplete'; 
 import { logout } from '../authService';
@@ -64,6 +64,7 @@ const Home = () => {
 
   const [showNotificationSettings, setShowNotificationSettings] = useState(false); // State to toggle notification settings visibility
   const [selectedFlight, setSelectedFlight] = useState(null); // To hold the selected flight data
+  const [showOfferMessage, setShowOfferMessage] = useState(false); // State to handle "View Offer" messages
 
   const navigate = useNavigate();
 
@@ -131,18 +132,9 @@ const Home = () => {
     }
   };
 
-  const handleSortChange = (e) => {
-    const option = e.target.value;
-    setSortOption(option);
-    const sortedLocations = [...locations].sort((a, b) => {
-      if (option === 'price') {
-        return a.price.total - b.price.total;
-      } else if (option === 'date') {
-        return new Date(a.departureDate) - new Date(b.departureDate);
-      }
-      return 0;
-    });
-    setLocations(sortedLocations);
+  const handleShowOffer = () => {
+    setShowOfferMessage(true);
+    setTimeout(() => setShowOfferMessage(false), 5000);
   };
 
   const handleNotificationChange = (field, value) => {
@@ -162,24 +154,24 @@ const Home = () => {
       frequency_unit: data.frequency_unit,
     };
     try {
-      await axios.post('http://localhost:8000/notify/notifications/', notificationPayload, { withCredentials: true });
+      await axios.post('http://localhost:8000/notify/notify/notifications/', notificationPayload, { withCredentials: true });
       alert('Notification created successfully');
-      setShowNotificationSettings(false); // Hide the notification form after successful creation
+      setShowNotificationSettings(false);
     } catch (error) {
       console.error('Error creating notification:', error);
     }
   };
 
   const handleShowNotificationSettings = (flight) => {
-    setSelectedFlight(flight); // Set the selected flight when the notification settings are triggered
+    setSelectedFlight(flight);
     setNotificationData({
       ...notificationData,
       origin: flight.origin,
       destination: flight.destination,
       departure_date: flight.departureDate,
       max_price: flight.price.total,
-    }); // Pre-fill the notification data with the selected flight
-    setShowNotificationSettings(true); // Show notification form
+    });
+    setShowNotificationSettings(true);
   };
 
   return (
@@ -264,14 +256,25 @@ const Home = () => {
                     Date: {flight.departureDate} - Price: ${flight.price.total}
                   </Typography>
                 </Box>
-                <Button
-                  variant="contained"
-                  size="small"
-                  color="primary"
-                  onClick={() => handleShowNotificationSettings(flight)} // Pass selected flight to modal
-                >
-                  Create Notification
-                </Button>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <Button
+                    variant="contained"
+                    size="small"
+                    color="primary"
+                    onClick={() => handleShowNotificationSettings(flight)}
+                  >
+                    Create Notification
+                  </Button>
+                  <Button
+                    variant="text"
+                    size="small"
+                    color="secondary"
+                    onClick={handleShowOffer}
+                    sx={{ fontSize: '0.8rem', textDecoration: 'underline' }}
+                  >
+                    View Offer
+                  </Button>
+                </Box>
               </Box>
             ))}
             {hasMore && (
@@ -282,13 +285,18 @@ const Home = () => {
           </Box>
         )}
 
-        {/* Notification Settings Modal */}
+        {showOfferMessage && (
+          <Alert severity="info" sx={{ mt: 2 }}>
+            Amadeus está en un ambiente de pruebas. Para comprar el vuelo, necesitas pagar el servicio.
+          </Alert>
+        )}
+
         <Frequency_Pop
           isOpen={showNotificationSettings}
-          onClose={() => setShowNotificationSettings(false)} // Close modal on cancel
-          onSubmit={handleCreateNotification} // Handle notification creation
-          notificationData={notificationData} // Pass notification data to modal
-          onNotificationDataChange={handleNotificationChange} // Handle changes in the modal
+          onClose={() => setShowNotificationSettings(false)}
+          onSubmit={handleCreateNotification}
+          notificationData={notificationData}
+          onNotificationDataChange={handleNotificationChange}
         />
 
         {loading && <Typography variant="body1">Loading...</Typography>}

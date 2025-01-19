@@ -12,7 +12,7 @@ const Notifications = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/notify/notifications/', { withCredentials: true });
+        const response = await axios.get('http://localhost:8000/notify/notify/notifications/', { withCredentials: true });
         setNotifications(response.data);
       } catch (error) {
         setError('Failed to load notifications.');
@@ -28,7 +28,7 @@ const Notifications = () => {
   const handleDelete = async (notificationId) => {
     try {
       const delId=parseInt(notificationId);
-      await axios.delete(`http://localhost:8000/notify/notifications/${delId}/`, { withCredentials: true });
+      await axios.delete(`http://localhost:8000/notify/notify/notifications/${delId}/`, { withCredentials: true });
       setNotifications(prevNotifications => prevNotifications.filter(notification => notification.id !== delId));
     } catch (error) {
       setError('Failed to delete notification.');

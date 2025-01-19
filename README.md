@@ -56,34 +56,67 @@ Tech Stack
 
     Email Service: Integrated email notifications for price alerts
 
-    Web Server: Nginx for serving static files and reverse proxying
+    Web Server: Nginx for serving static files and reverse proxying\
+
+
+
+"""""" IMPORTANT """"""
+    Amadeus API: I initially used the free Amadeus API, which worked well in the beginning. However, I later discovered that it operates in a test environment, which can lead to frequent failures, especially with larger searches or specific date ranges. To ensure reliable results, the Amadeus production API must be used, which requires a paid subscription. Below are some example queries that I know work well, but keep in mind that for full functionality, you will need to switch to Amadeus Production:
+
+        Example Search 1:
+        Origin: MAD
+        Departure Date: 02/18/2025
+        Return Date: 02/19/2025
+        Max Price: 70
+
+        Example Search 2:
+        Origin: MAD
+        Departure Date: 02/18/2025
+        Return Date: 02/27/2025
+        Max Price: 70
+        Duration: 5 days
+
+        Example Search 3:
+        Origin: MAD
+        Departure Date: 02/18/2025
+        One-Way: True
+        Max Price: 100
+
+        Example Search 4:
+        Origin: LONDON
+        Departure Date: 02/19/2025
+        Max Price: 60
+        One-Way: True
+
+    SendGrid Email Service: Although SendGrid's API often marks email tasks as successful, sometimes the service fails to actually send the emails, despite showing a successful status in Celery logs. This issue can lead to delays or undelivered emails. I recommend considering AWS for email delivery in future iterations of the application.
+
 
 Getting Started
 
-Setup Instructions
+    Setup Instructions
 
-Follow these steps to set up and run the project using Docker:
+    Follow these steps to set up and run the project using Docker:
 
-Clone the repository:
+    Clone the repository:
 
-git clone <repository-url>
-cd flight-price-alerts
+        git clone <repository-url>
+        cd flight-price-alerts
 
-Create a .env file:
-Create a .env file in the root directory based on the provided .env.example file. Ensure all necessary environment variables (API keys, database credentials, etc.) are set correctly.
+    Create a .env file:
+        Create a .env file in the root directory based on the provided .env.example file. Ensure all necessary environment variables (API keys, database credentials, etc.) are set correctly.
 
-Create .env in backend/.env directory
+        Create .env in backend/.env directory
 
-Build and start the services:
-    Run the following command to build and start the application:
+    Build and start the services:
+        Run the following command to build and start the application:
 
-    docker-compose up --build
+        docker-compose up --build
 
-    Access the application:
+        Access the application:
 
-    Frontend: Visit http://localhost:3000 to interact with the web app.
+        Frontend: Visit http://localhost:3000 to interact with the web app.
 
-    Backend API: Access the FastAPI documentation at http://localhost:8000/docs.
+        Backend API: Access the FastAPI documentation at http://localhost:8000/docs.
 
 
 Running Tests:
@@ -108,6 +141,10 @@ Interesting Choices & Lessons Learned:
     Dynamic Search: Implementing flexible flight search options, such as budget and date ranges, adds real value for users seeking affordable travel options.
 
     User Experience: Integrating email alerts and a dashboard enhances the app's usability.
+
+    Dependence on APIs: Relying on external APIs can be both beneficial and challenging. For example, Amadeus offers a free API in a testing environment. Initially, everything worked well, but I later realized that with larger search queries or specific date ranges, the test environment was unreliable and frequently returned 500 errors. To access full functionality without these issues, upgrading to the production tier is necessary but you have to pay.
+
+    Email Delivery Challenges: While SendGrid offers an API for sending emails, I learned that even when the task is marked as "successful," email delivery can sometimes fail or experience significant delays. This makes it more reliable to use robust services like AWS for critical email notifications.
 
 Future Features:
 
