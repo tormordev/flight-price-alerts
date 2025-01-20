@@ -32,6 +32,8 @@ services:
       - LOG_LEVEL=info  
     env_file:
       - .env
+    depends_on:
+      - db
     networks:
       - app-network
   
@@ -75,6 +77,7 @@ services:
     depends_on:
       - redis
       - db
+      - backend
     networks:
       - app-network
 

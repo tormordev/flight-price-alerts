@@ -105,8 +105,6 @@ Getting Started
     Create a .env file:
         Create a .env file in the root directory based on the provided .env.example file. Ensure all necessary environment variables (API keys, database credentials, etc.) are set correctly.
 
-        Create .env in backend/.env directory
-
     Build and start the services:
         Run the following command to build and start the application:
 
